@@ -43,6 +43,7 @@ public class XmlAddressBookStorage implements AddressBookStorage {
     public Optional<ReadOnlyAddressBook> readAddressBook(String filePath) throws DataConversionException,
                                                                                  FileNotFoundException {
         requireNonNull(filePath);
+
         File addressBookFile = new File(filePath);
 
         if (!addressBookFile.exists()) {
