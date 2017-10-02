@@ -11,7 +11,7 @@ We are a team based in the http://www.comp.nus.edu.sg[School of Computing, Natio
 
 == Project Team
 
-=== John Doe
+=== Prata Flipper Numba 1 
 image::damithc.jpg[width="150", align="left"]
 {empty}[http://www.comp.nus.edu.sg/~damithch[homepage]] [https://github.com/damithc[github]] [<<johndoe#, portfolio>>]
 
@@ -19,7 +19,7 @@ Role: Project Advisor
 
 '''
 
-=== John Roe
+=== Prata Flipper Numba 2 
 image::lejolly.jpg[width="150", align="left"]
 {empty}[http://github.com/lejolly[github]] [<<johndoe#, portfolio>>]
 
@@ -28,7 +28,7 @@ Responsibilities: UI
 
 '''
 
-=== Johnny Doe
+=== Prata Flipper Numba 3 
 image::yijinl.jpg[width="150", align="left"]
 {empty}[http://github.com/yijinl[github]] [<<johndoe#, portfolio>>]
 
@@ -37,7 +37,7 @@ Responsibilities: Data
 
 '''
 
-=== Johnny Roe
+=== Prata Flipper Numba 4 
 image::m133225.jpg[width="150", align="left"]
 {empty}[http://github.com/m133225[github]] [<<johndoe#, portfolio>>]
 
