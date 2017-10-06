@@ -739,7 +739,7 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 
 |`**` |user |encrypt selected contacts |avoid people from seeing confidential contact
 
-|`*` |user |add temporary contacts |don't have to add them permanently into my contact list. 
+|`*` |user |add temporary contacts |don't have to add them permanently into my contact list.
 
 |`**` |user |delete contacts by tag |remove them at one go
 
@@ -748,7 +748,7 @@ Priorities: High (must have) - `* * \*`, Medium (nice to have) - `* \*`, Low (un
 |`*` |user |have tag coloring |find the category of contacts I am looking for
 
 |`**` |user | use autocomplete |save typing time
- 
+
 |=======================================================================
 
 {More to be added}
