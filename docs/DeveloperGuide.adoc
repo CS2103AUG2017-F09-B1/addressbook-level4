@@ -364,6 +364,12 @@ We are using `java.util.logging` package for logging. The `LogsCenter` class is 
 
 Certain properties of the application can be controlled (e.g App name, logging level) through the configuration file (default: `config.json`).
 
+// tag:: autocomplete
+
+The autocomplete feature utilizes the AutoComplete class under Logic and is implemented in CommandBox under UI.
+
+The autocomplete list is updated every update instance of the model component.
+
 // tag::import[]
 === Import mechanism
 
