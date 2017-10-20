@@ -59,6 +59,7 @@ image::Ui_short_error.PNG[width="790"]
 * Items in square brackets are optional e.g `n/NAME [t/TAG]` can be used as `n/John Doe t/friend` or as `n/John Doe`.
 * Items with `…`​ after them can be used multiple times including zero times e.g. `[t/TAG]...` can be used as `{nbsp}` (i.e. 0 times), `t/friend`, `t/friend t/family` etc.
 * Parameters can be in any order e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
+* Autocomplete options show up upon input
 ====
 
 === Viewing help : `help`
@@ -269,6 +270,21 @@ There is no need to save manually.
 
 Address book data can be stored in a back up file when necessary. This is good in case any the existing address book is corrupted. +
 Format: `backup`
+
+=== Import data : `import` (Since v1.2)
+
+Add contact details from external xml file into current address book. +
+Format: import FILE_PATH
+
+****
+* Adds all person that is not already in the address book.
+* The FILE_PATH must contain a valid xml file.
+****
+
+Examples:
+
+* `import C:\Desktop\colleagues.xml` +
+Imports colleagues.xml into current address book.
 
 === Facebook Search (coming in V2.0)
 
