@@ -1,4 +1,3 @@
-//@@author shitian007
 package seedu.room.ui;
 
 import java.io.File;
