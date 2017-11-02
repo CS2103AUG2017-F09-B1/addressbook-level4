@@ -195,7 +195,6 @@ public class ResidentBook implements ReadOnlyResidentBook {
     }
 
 
-    //@@author shitian007
     //// sort address book
     /** Updates highlight status of person with specified tag
      */
@@ -209,7 +208,6 @@ public class ResidentBook implements ReadOnlyResidentBook {
             throw new TagNotFoundException("Tag not found");
         }
     }
-    //@@author
 
     //// sort resident book
     //@@author sushinoya

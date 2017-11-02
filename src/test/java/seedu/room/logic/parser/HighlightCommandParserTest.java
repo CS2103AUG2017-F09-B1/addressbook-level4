@@ -1,4 +1,3 @@
-//@@author shitian007
 package seedu.room.logic.parser;
 
 import static seedu.room.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;

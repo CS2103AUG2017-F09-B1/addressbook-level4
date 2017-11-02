@@ -1,4 +1,3 @@
-//@@author shitian007
 package seedu.room.model.person;
 
 /**
