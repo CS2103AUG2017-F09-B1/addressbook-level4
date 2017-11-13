@@ -1,243 +1,319 @@
 # sushinoya
-###### \java\seedu\room\logic\commands\AddCommandTest.java
+###### /java/seedu/room/logic/parser/ResidentBookParserTest.java
 ``` java
-        @Override
-        public void sortBy(String sortCriteria) throws AlreadySortedException {
-            fail("This method should not be called.");
-        }
-
+    @Test
+    public void parseCommand_addEvent() throws Exception {
+        Event event = new EventBuilder().build();
+        AddEventCommand command = (AddEventCommand) parser.parseCommand(EventUtil.getAddEventCommand(event));
+        assertEquals(new AddEventCommand(event), command);
+    }
 ```
-###### \java\seedu\room\logic\commands\AddCommandTest.java
+###### /java/seedu/room/logic/parser/ResidentBookParserTest.java
 ``` java
-        public void swapRooms(ReadOnlyPerson person1, ReadOnlyPerson person2) throws PersonNotFoundException {
-            fail("This method should not be called.");
-        }
+    @Test
+    public void parseCommand_deleteEvent() throws Exception {
+        DeleteCommand command = (DeleteCommand) parser.parseCommand(
+                DeleteCommand.COMMAND_WORD + " " + INDEX_FIRST_EVENT.getOneBased());
+        assertEquals(new DeleteCommand(INDEX_FIRST_EVENT), command);
+    }
+```
+###### /java/seedu/room/logic/parser/SortCommandParserTest.java
+``` java
+public class SortCommandParserTest {
 
-        @Override
-        public ReadOnlyEventBook getEventBook() {
-            fail("This method should not be called.");
-            return null;
-        }
+    private SortCommandParser parser = new SortCommandParser();
 
-        @Override
-        public void deleteEvent(ReadOnlyEvent target) throws EventNotFoundException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public void addEvent(ReadOnlyEvent person) throws DuplicateEventException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public void updateEvent(ReadOnlyEvent target, ReadOnlyEvent editedEvent) throws DuplicateEventException,
-                                                                                            EventNotFoundException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public ObservableList<ReadOnlyEvent> getFilteredEventList() {
-            fail("This method should not be called.");
-            return null;
-        }
-
-        @Override
-        public void updateFilteredEventList(Predicate<ReadOnlyEvent> predicate) {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public void sortEventsBy(String sortCriteria) throws AlreadySortedException {
-            fail("This method should not be called.");
-        }
+    @Test
+    public void parse_validArgsPhone_returnsSwapCommand() {
+        assertParseSuccess(parser, " phone", new SortCommand("phone"));
     }
 
-```
-###### \java\seedu\room\logic\commands\AddEventCommandTest.java
-``` java
-        @Override
-        public void sortBy(String sortCriteria) throws AlreadySortedException {
-            fail("This method should not be called.");
-        }
-
-```
-###### \java\seedu\room\logic\commands\AddEventCommandTest.java
-``` java
-        public void swapRooms(ReadOnlyPerson person1, ReadOnlyPerson person2) throws PersonNotFoundException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public ReadOnlyEventBook getEventBook() {
-            fail("This method should not be called.");
-            return null;
-        }
-
-        @Override
-        public void deleteEvent(ReadOnlyEvent target) throws EventNotFoundException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public void addEvent(ReadOnlyEvent person) throws DuplicateEventException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public void updateEvent(ReadOnlyEvent target, ReadOnlyEvent editedEvent) throws DuplicateEventException,
-                EventNotFoundException {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public ObservableList<ReadOnlyEvent> getFilteredEventList() {
-            fail("This method should not be called.");
-            return null;
-        }
-
-        @Override
-        public void updateFilteredEventList(Predicate<ReadOnlyEvent> predicate) {
-            fail("This method should not be called.");
-        }
-
-        @Override
-        public void sortEventsBy(String sortCriteria) throws AlreadySortedException {
-            fail("This method should not be called.");
-        }
+    @Test
+    public void parse_validArgsName_returnsSwapCommand() {
+        assertParseSuccess(parser, " name", new SortCommand("name"));
     }
 
-```
-###### \java\seedu\room\logic\commands\CommandTestUtil.java
-``` java
-    /**
-     * Updates {@code model}'s filtered list to show only the first event in the {@code model}'s event book.
-     */
-    public static void showFirstEventOnly(Model model) {
-        ReadOnlyEvent event = model.getEventBook().getEventList().get(0);
-        final String[] splitTitle = event.getTitle().value.split("\\s+");
-        model.updateFilteredEventList(new TitleContainsKeywordsPredicate(Arrays.asList(splitTitle[0])));
-
-        assert model.getFilteredEventList().size() == 1;
+    @Test
+    public void parse_invalidArgs_throwsParseException() {
+        assertParseFailure(parser, " tag", String.format(MESSAGE_INVALID_COMMAND_FORMAT, SortCommand.MESSAGE_USAGE));
     }
 
-    /**
-     * Deletes the first person in {@code model}'s filtered list from {@code model}'s event book.
-     */
-    public static void deleteFirstEvent(Model model) {
-        ReadOnlyEvent firstEvent = model.getFilteredEventList().get(0);
-        try {
-            model.deleteEvent(firstEvent);
-        } catch (EventNotFoundException enfe) {
-            throw new AssertionError("Event in filtered list must exist in model.", enfe);
-        }
+    @Test
+    public void parse_invalidNumArgs_throwsParseException() {
+        assertParseFailure(parser, " name phone", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                SortCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_emptyArgs_throwsParseException() {
+        assertParseFailure(parser, "", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                SortCommand.MESSAGE_USAGE));
     }
 }
 ```
-###### \java\seedu\room\logic\commands\DeleteEventCommandTest.java
+###### /java/seedu/room/logic/parser/AddEventCommandParserTest.java
 ``` java
-/**
- * Contains integration tests (interaction with the Model) and unit tests for {@code DeleteEventCommand}.
- */
-public class DeleteEventCommandTest {
-
-    private Model model = new ModelManager(getTypicalResidentBook(), getTypicalEventBook(), new UserPrefs());
+public class AddEventCommandParserTest {
+    private AddEventCommandParser parser = new AddEventCommandParser();
 
     @Test
-    public void execute_validIndexUnfilteredList_success() throws Exception {
-        ReadOnlyEvent eventToDelete = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
-        DeleteEventCommand deleteEventCommand = prepareCommand(INDEX_FIRST_EVENT);
+    public void parse_allFieldsPresent_success() {
+        Event expectedEvent = new EventBuilder().withTitle(VALID_TITLE_ORIENTATION)
+                .withDescription(VALID_DESCRIPTION_ORIENTATION)
+                .withLocation(VALID_LOCATION_ORIENTATION).withDatetime(VALID_DATETIME_ORIENTATION).build();
 
-        String expectedMessage = String.format(DeleteEventCommand.MESSAGE_DELETE_EVENT_SUCCESS, eventToDelete);
+        // (with command word) multiple titles - last title accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH
+                + TITLE_DESC_ORIENTATION + DESCRIPTION_DESC_ORIENTATION
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
 
-        ModelManager expectedModel = new ModelManager(model.getResidentBook(), model.getEventBook(), new UserPrefs());
-        ReadOnlyEvent expectedEventToDelete = expectedModel.getFilteredEventList()
-                .get(INDEX_FIRST_EVENT.getZeroBased());
-        expectedModel.deleteEvent(expectedEventToDelete);
+        // (with alias) multiple titles - last title accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH
+                + TITLE_DESC_ORIENTATION + DESCRIPTION_DESC_ORIENTATION
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
 
-        assertCommandSuccess(deleteEventCommand, model, expectedMessage, expectedModel);
+        // (with command word) multiple description - last description accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_POLYMATH + DESCRIPTION_DESC_ORIENTATION
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
+
+        // (with alias) multiple description - last description accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_POLYMATH + DESCRIPTION_DESC_ORIENTATION
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
+
+        // (with command word) multiple locations - last location accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_POLYMATH
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
+
+        // (with alias) multiple locations - last location accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_POLYMATH
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
+
+        // (with command word) multiple datetime - last datetime accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_ORIENTATION
+                + DATETIME_DESC_POLYMATH + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
+
+        // (with alias) multiple datetime - last datetime accepted
+        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_ORIENTATION
+                + DATETIME_DESC_POLYMATH + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
+    }
+
+
+    @Test
+    public void parse_compulsoryFieldMissing_failure() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddEventCommand.MESSAGE_USAGE);
+
+        // (with command word) missing title prefix
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + DESCRIPTION_DESC_ORIENTATION
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, expectedMessage);
+
+        // (with command word) missing location prefix
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, expectedMessage);
+
+        // (with command word) missing datetime prefix
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
+                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_ORIENTATION , expectedMessage);
+
+        // (with command word) missing description prefix
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
+                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, expectedMessage);
     }
 
     @Test
-    public void execute_invalidIndexUnfilteredList_throwsCommandException() throws Exception {
-        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
-        DeleteEventCommand deleteEventCommand = prepareCommand(outOfBoundIndex);
+    public void parse_invalidValue_failure() {
+        // (with command word) invalid title
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + INVALID_TITLE_DESC + LOCATION_DESC_POLYMATH
+                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Title.MESSAGE_TITLE_CONSTRAINTS);
 
-        assertCommandFailure(deleteEventCommand, model, Messages.MESSAGE_INVALID_EVENT_DISPLAYED_INDEX);
-    }
+        // (with alias) invalid title
+        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + INVALID_TITLE_DESC + LOCATION_DESC_POLYMATH
+                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Title.MESSAGE_TITLE_CONSTRAINTS);
 
-    @Test
-    public void execute_validIndexFilteredList_success() throws Exception {
-        showFirstEventOnly(model);
+        // (with command word) invalid location
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH + INVALID_LOCATION_DESC
+                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Location.MESSAGE_LOCATION_CONSTRAINTS);
 
-        ReadOnlyEvent eventToDelete = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
-        DeleteEventCommand deleteEventCommand = prepareCommand(INDEX_FIRST_EVENT);
+        // (with alias) invalid location
+        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH + INVALID_LOCATION_DESC
+                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Location.MESSAGE_LOCATION_CONSTRAINTS);
 
-        String expectedMessage = String.format(DeleteEventCommand.MESSAGE_DELETE_EVENT_SUCCESS, eventToDelete);
+        // (with command word) invalid description
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH + LOCATION_DESC_POLYMATH
+                + INVALID_DESCRIPTION_DESC + DATETIME_DESC_POLYMATH, Description.MESSAGE_DESCRIPTION_CONSTRAINTS);
 
-        Model expectedModel = new ModelManager(model.getResidentBook(), model.getEventBook(), new UserPrefs());
-        ReadOnlyEvent expectedEventToDelete = expectedModel.getFilteredEventList()
-                .get(INDEX_FIRST_EVENT.getZeroBased());
-        expectedModel.deleteEvent(expectedEventToDelete);
-        showNoEvent(expectedModel);
+        // (with alias) invalid description
+        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH
+                + LOCATION_DESC_POLYMATH + INVALID_DESCRIPTION_DESC
+                + DATETIME_DESC_POLYMATH, Description.MESSAGE_DESCRIPTION_CONSTRAINTS);
 
-        assertCommandSuccess(deleteEventCommand, model, expectedMessage, expectedModel);
-    }
+        // (with command word) invalid datetime
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH + LOCATION_DESC_POLYMATH
+                        + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC, Datetime.DATE_CONSTRAINTS_VIOLATION);
 
-    @Test
-    public void execute_invalidIndexFilteredList_throwsCommandException() {
-        showFirstEventOnly(model);
+        // (with alias) invalid datetime
+        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH
+                        + LOCATION_DESC_POLYMATH + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC,
+                Datetime.DATE_CONSTRAINTS_VIOLATION);
 
-        Index outOfBoundIndex = INDEX_SECOND_EVENT;
-        // ensures that outOfBoundIndex is still in bounds of event book list
-        assertTrue(outOfBoundIndex.getZeroBased() < model.getEventBook().getEventList().size());
+        // (with command word) two invalid values, only first invalid value reported
+        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + INVALID_TITLE_DESC + LOCATION_DESC_POLYMATH
+                + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC, Title.MESSAGE_TITLE_CONSTRAINTS);
 
-        DeleteEventCommand deleteEventCommand = prepareCommand(outOfBoundIndex);
-
-        assertCommandFailure(deleteEventCommand, model, Messages.MESSAGE_INVALID_EVENT_DISPLAYED_INDEX);
-    }
-
-    @Test
-    public void equals() {
-        DeleteEventCommand deleteFirstEventCommand = new DeleteEventCommand(INDEX_FIRST_EVENT);
-        DeleteEventCommand deleteSecondEventCommand = new DeleteEventCommand(INDEX_SECOND_EVENT);
-
-        // same object -> returns true
-        assertTrue(deleteFirstEventCommand.equals(deleteFirstEventCommand));
-
-        // same values -> returns true
-        DeleteEventCommand deleteFirstEventCommandCopy = new DeleteEventCommand(INDEX_FIRST_EVENT);
-        assertTrue(deleteFirstEventCommand.equals(deleteFirstEventCommandCopy));
-
-        // different types -> returns false
-        assertFalse(deleteFirstEventCommand.equals(1));
-
-        // null -> returns false
-        assertFalse(deleteFirstEventCommand.equals(null));
-
-        // different person -> returns false
-        assertFalse(deleteFirstEventCommand.equals(deleteSecondEventCommand));
-    }
-
-    /**
-     * Returns a {@code DeleteCommand} with the parameter {@code index}.
-     */
-    private DeleteEventCommand prepareCommand(Index index) {
-        DeleteEventCommand deleteEventCommand = new DeleteEventCommand(index);
-        deleteEventCommand.setData(model, new CommandHistory(), new UndoRedoStack());
-        return deleteEventCommand;
-    }
-
-    /**
-     * Updates {@code model}'s filtered list to show no one.
-     */
-    private void showNoEvent(Model model) {
-        model.updateFilteredEventList(p -> false);
-
-        assert model.getFilteredEventList().isEmpty();
+        // (with alias) two invalid values, only first invalid value reported
+        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + INVALID_TITLE_DESC
+                + LOCATION_DESC_POLYMATH + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC,
+                Title.MESSAGE_TITLE_CONSTRAINTS);
     }
 }
 ```
-###### \java\seedu\room\logic\commands\SortCommandTest.java
+###### /java/seedu/room/logic/parser/SwitchTabCommandParserTest.java
+``` java
+public class SwitchTabCommandParserTest {
+
+    private SwitchTabCommandParser parser = new SwitchTabCommandParser();
+
+    @Test
+    public void parse_validArgs_returnsSwitchTabCommand() {
+        assertParseSuccess(parser, " 1", new SwitchTabCommand(1));
+    }
+
+    @Test
+    public void parse_invalidArgs_throwsParseException() {
+        assertParseFailure(parser, " a", String.format(MESSAGE_INVALID_COMMAND_FORMAT, SwitchTabCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_invalidNumArgs_throwsParseException() {
+        assertParseFailure(parser, " 3", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                SwitchTabCommand.MESSAGE_USAGE));
+    }
+}
+```
+###### /java/seedu/room/logic/parser/AddCommandParserTest.java
+``` java
+    @Test
+    public void parse_optionalFieldsMissing_success() {
+        // zero tags
+        Person expectedPerson = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
+                .withEmail(VALID_EMAIL_AMY).withRoom(VALID_ROOM_AMY).withTags().build();
+        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
+                + EMAIL_DESC_AMY + ROOM_DESC_AMY, new AddCommand(expectedPerson));
+
+        // without phone
+        Person expectedPerson2 = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(DEFAULT_NOT_SET)
+                .withEmail(VALID_EMAIL_AMY).withRoom(VALID_ROOM_AMY)
+                .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).build();
+        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DEFAULT_UNSET
+                        + EMAIL_DESC_AMY + ROOM_DESC_AMY + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
+                new AddCommand(expectedPerson2));
+
+        // without email
+        Person expectedPerson3 = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
+                .withEmail(DEFAULT_NOT_SET).withRoom(VALID_ROOM_AMY).withTags(VALID_TAG_HUSBAND,
+                VALID_TAG_FRIEND).build();
+        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
+                        + EMAIL_DEFAULT_UNSET + ROOM_DESC_AMY + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
+                new AddCommand(expectedPerson3));
+
+        // without room
+        Person expectedPerson4 = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
+                .withEmail(VALID_EMAIL_AMY).withRoom(DEFAULT_NOT_SET)
+                .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).build();
+        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
+                        + EMAIL_DESC_AMY + ROOM_DEFAULT_UNSET + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
+                new AddCommand(expectedPerson4));
+    }
+
+    @Test
+    public void parse_compulsoryFieldMissing_failure() {
+        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE);
+
+        // missing name prefix
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + VALID_NAME_BOB + PHONE_DESC_BOB
+                + EMAIL_DESC_BOB + ROOM_DESC_BOB, expectedMessage);
+
+        // all prefixes missing
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + VALID_NAME_BOB + VALID_PHONE_BOB
+                + VALID_EMAIL_BOB + VALID_ROOM_BOB, expectedMessage);
+    }
+
+    @Test
+    public void parse_invalidValue_failure() {
+        // invalid name
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB
+                        + ROOM_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Name.MESSAGE_NAME_CONSTRAINTS);
+
+        // invalid phone
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + INVALID_PHONE_DESC + EMAIL_DESC_BOB
+                + ROOM_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Phone.MESSAGE_PHONE_CONSTRAINTS);
+
+        // invalid email
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + PHONE_DESC_BOB + INVALID_EMAIL_DESC
+                        + ROOM_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Email.MESSAGE_EMAIL_CONSTRAINTS);
+
+        // invalid room
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
+                        + INVALID_ROOM_DESC + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
+                Room.MESSAGE_ROOM_CONSTRAINTS);
+
+        // invalid tag
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
+                        + ROOM_DESC_BOB + INVALID_TAG_DESC + VALID_TAG_FRIEND, Tag.MESSAGE_TAG_CONSTRAINTS);
+
+        // two invalid values, only first invalid value reported
+        assertParseFailure(parser, AddCommand.COMMAND_WORD + INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB
+                + INVALID_ROOM_DESC, Name.MESSAGE_NAME_CONSTRAINTS);
+    }
+}
+```
+###### /java/seedu/room/logic/parser/SwaproomCommandParserTest.java
+``` java
+public class SwaproomCommandParserTest {
+
+    private SwaproomCommandParser parser = new SwaproomCommandParser();
+
+    @Test
+    public void parse_validArgs_returnsSwapCommand() {
+        assertParseSuccess(parser, " 1 2", new SwaproomCommand(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON));
+    }
+
+    @Test
+    public void parse_invalidArgs_throwsParseException() {
+        assertParseFailure(parser, " a", String.format(MESSAGE_INVALID_COMMAND_FORMAT, SwaproomCommand.MESSAGE_USAGE));
+    }
+
+    @Test
+    public void parse_invalidNumArgs_throwsParseException() {
+        assertParseFailure(parser, " 1 3 4", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                SwaproomCommand.MESSAGE_USAGE));
+    }
+}
+```
+###### /java/seedu/room/logic/parser/DeleteEventCommandParserTest.java
+``` java
+public class DeleteEventCommandParserTest {
+
+    private DeleteEventCommandParser parser = new DeleteEventCommandParser();
+
+    @Test
+    public void parse_validArgs_returnsDeleteEventCommand() {
+        assertParseSuccess(parser, "1", new DeleteEventCommand(INDEX_FIRST_EVENT));
+    }
+
+    @Test
+    public void parse_invalidArgs_throwsParseException() {
+        assertParseFailure(parser, "a", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                DeleteEventCommand.MESSAGE_USAGE));
+    }
+}
+```
+###### /java/seedu/room/logic/commands/SortCommandTest.java
 ``` java
 /**
  * Contains integration tests (interaction with the Model) and unit tests for SortCommand.
@@ -292,7 +368,7 @@ public class SortCommandTest {
 
 }
 ```
-###### \java\seedu\room\logic\commands\SwaproomCommandTest.java
+###### /java/seedu/room/logic/commands/SwaproomCommandTest.java
 ``` java
 /**
  * Contains integration tests (interaction with the Model) and unit tests for {@code SwaproomCommand}.
@@ -386,393 +462,318 @@ public class SwaproomCommandTest {
     }
 }
 ```
-###### \java\seedu\room\logic\parser\AddCommandParserTest.java
+###### /java/seedu/room/logic/commands/AddEventCommandTest.java
 ``` java
-    @Test
-    public void parse_optionalFieldsMissing_success() {
-        // zero tags
-        Person expectedPerson = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
-                .withEmail(VALID_EMAIL_AMY).withRoom(VALID_ROOM_AMY).withTags().build();
-        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
-                + EMAIL_DESC_AMY + ROOM_DESC_AMY, new AddCommand(expectedPerson));
+        @Override
+        public void sortBy(String sortCriteria) throws AlreadySortedException {
+            fail("This method should not be called.");
+        }
 
-        // without phone
-        Person expectedPerson2 = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(DEFAULT_NOT_SET)
-                .withEmail(VALID_EMAIL_AMY).withRoom(VALID_ROOM_AMY)
-                .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).build();
-        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DEFAULT_UNSET
-                        + EMAIL_DESC_AMY + ROOM_DESC_AMY + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
-                new AddCommand(expectedPerson2));
-
-        // without email
-        Person expectedPerson3 = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
-                .withEmail(DEFAULT_NOT_SET).withRoom(VALID_ROOM_AMY).withTags(VALID_TAG_HUSBAND,
-                VALID_TAG_FRIEND).build();
-        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
-                        + EMAIL_DEFAULT_UNSET + ROOM_DESC_AMY + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
-                new AddCommand(expectedPerson3));
-
-        // without room
-        Person expectedPerson4 = new PersonBuilder().withName(VALID_NAME_AMY).withPhone(VALID_PHONE_AMY)
-                .withEmail(VALID_EMAIL_AMY).withRoom(DEFAULT_NOT_SET)
-                .withTags(VALID_TAG_HUSBAND, VALID_TAG_FRIEND).build();
-        assertParseSuccess(parser, AddCommand.COMMAND_WORD + NAME_DESC_AMY + PHONE_DESC_AMY
-                        + EMAIL_DESC_AMY + ROOM_DEFAULT_UNSET + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
-                new AddCommand(expectedPerson4));
-    }
-
-    @Test
-    public void parse_compulsoryFieldMissing_failure() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE);
-
-        // missing name prefix
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + VALID_NAME_BOB + PHONE_DESC_BOB
-                + EMAIL_DESC_BOB + ROOM_DESC_BOB, expectedMessage);
-
-        // all prefixes missing
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + VALID_NAME_BOB + VALID_PHONE_BOB
-                + VALID_EMAIL_BOB + VALID_ROOM_BOB, expectedMessage);
-    }
-
-    @Test
-    public void parse_invalidValue_failure() {
-        // invalid name
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                        + ROOM_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Name.MESSAGE_NAME_CONSTRAINTS);
-
-        // invalid phone
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + INVALID_PHONE_DESC + EMAIL_DESC_BOB
-                + ROOM_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Phone.MESSAGE_PHONE_CONSTRAINTS);
-
-        // invalid email
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + PHONE_DESC_BOB + INVALID_EMAIL_DESC
-                        + ROOM_DESC_BOB + TAG_DESC_HUSBAND + TAG_DESC_FRIEND, Email.MESSAGE_EMAIL_CONSTRAINTS);
-
-        // invalid room
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                        + INVALID_ROOM_DESC + TAG_DESC_HUSBAND + TAG_DESC_FRIEND,
-                Room.MESSAGE_ROOM_CONSTRAINTS);
-
-        // invalid tag
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                        + ROOM_DESC_BOB + INVALID_TAG_DESC + VALID_TAG_FRIEND, Tag.MESSAGE_TAG_CONSTRAINTS);
-
-        // two invalid values, only first invalid value reported
-        assertParseFailure(parser, AddCommand.COMMAND_WORD + INVALID_NAME_DESC + PHONE_DESC_BOB + EMAIL_DESC_BOB
-                + INVALID_ROOM_DESC, Name.MESSAGE_NAME_CONSTRAINTS);
-    }
-}
 ```
-###### \java\seedu\room\logic\parser\AddEventCommandParserTest.java
+###### /java/seedu/room/logic/commands/AddEventCommandTest.java
 ``` java
-public class AddEventCommandParserTest {
-    private AddEventCommandParser parser = new AddEventCommandParser();
-
-    @Test
-    public void parse_allFieldsPresent_success() {
-        Event expectedEvent = new EventBuilder().withTitle(VALID_TITLE_ORIENTATION)
-                .withDescription(VALID_DESCRIPTION_ORIENTATION)
-                .withLocation(VALID_LOCATION_ORIENTATION).withDatetime(VALID_DATETIME_ORIENTATION).build();
-
-        // multiple titles - last title accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH
-                + TITLE_DESC_ORIENTATION + DESCRIPTION_DESC_ORIENTATION
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // [alias] multiple titles - last title accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH
-                + TITLE_DESC_ORIENTATION + DESCRIPTION_DESC_ORIENTATION
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // multiple description - last description accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_POLYMATH + DESCRIPTION_DESC_ORIENTATION
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // [alias] multiple description - last description accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_POLYMATH + DESCRIPTION_DESC_ORIENTATION
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // multiple locations - last location accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_POLYMATH
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // [alias] multiple locations - last location accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_POLYMATH
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // multiple datetime - last datetime accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_ORIENTATION
-                + DATETIME_DESC_POLYMATH + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-
-        // [alias] multiple datetime - last datetime accepted
-        assertParseSuccess(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_ORIENTATION
-                + DATETIME_DESC_POLYMATH + DATETIME_DESC_ORIENTATION, new AddEventCommand(expectedEvent));
-    }
-
-
-    @Test
-    public void parse_compulsoryFieldMissing_failure() {
-        String expectedMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddEventCommand.MESSAGE_USAGE);
-
-        // missing title prefix
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + DESCRIPTION_DESC_ORIENTATION
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, expectedMessage);
-
-        // missing location prefix
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, expectedMessage);
-
-        // missing datetime prefix
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
-                + DESCRIPTION_DESC_ORIENTATION + LOCATION_DESC_ORIENTATION , expectedMessage);
-
-        // missing description prefix
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_ORIENTATION
-                + LOCATION_DESC_ORIENTATION + DATETIME_DESC_ORIENTATION, expectedMessage);
-    }
-
-    @Test
-    public void parse_invalidValue_failure() {
-        // invalid title
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + INVALID_TITLE_DESC + LOCATION_DESC_POLYMATH
-                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Title.MESSAGE_TITLE_CONSTRAINTS);
-
-        // [alias] invalid title
-        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + INVALID_TITLE_DESC + LOCATION_DESC_POLYMATH
-                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Title.MESSAGE_TITLE_CONSTRAINTS);
-
-        // invalid location
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH + INVALID_LOCATION_DESC
-                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Location.MESSAGE_LOCATION_CONSTRAINTS);
-
-        // [alias] invalid location
-        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH + INVALID_LOCATION_DESC
-                + DESCRIPTION_DESC_POLYMATH + DATETIME_DESC_POLYMATH, Location.MESSAGE_LOCATION_CONSTRAINTS);
-
-        // invalid description
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH + LOCATION_DESC_POLYMATH
-                + INVALID_DESCRIPTION_DESC + DATETIME_DESC_POLYMATH, Description.MESSAGE_DESCRIPTION_CONSTRAINTS);
-
-        // [alias] invalid description
-        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH
-                + LOCATION_DESC_POLYMATH + INVALID_DESCRIPTION_DESC
-                + DATETIME_DESC_POLYMATH, Description.MESSAGE_DESCRIPTION_CONSTRAINTS);
-
-        // invalid datetime
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + TITLE_DESC_POLYMATH + LOCATION_DESC_POLYMATH
-                        + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC, Datetime.DATE_CONSTRAINTS_VIOLATION);
-
-        // [alias] invalid datetime
-        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + TITLE_DESC_POLYMATH
-                        + LOCATION_DESC_POLYMATH + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC,
-                Datetime.DATE_CONSTRAINTS_VIOLATION);
-
-        // two invalid values, only first invalid value reported
-        assertParseFailure(parser, AddEventCommand.COMMAND_WORD + INVALID_TITLE_DESC + LOCATION_DESC_POLYMATH
-                + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC, Title.MESSAGE_TITLE_CONSTRAINTS);
-
-        // [alias] two invalid values, only first invalid value reported
-        assertParseFailure(parser, AddEventCommand.COMMAND_ALIAS + INVALID_TITLE_DESC
-                + LOCATION_DESC_POLYMATH + DESCRIPTION_DESC_POLYMATH + INVALID_DATETIME_DESC,
-                Title.MESSAGE_TITLE_CONSTRAINTS);
-    }
-}
-```
-###### \java\seedu\room\logic\parser\DeleteEventCommandParserTest.java
-``` java
-/**
- * As we are only doing white-box testing, our test cases do not cover path variations
- * outside of the DeleteEventCommand code. For example, inputs "1" and "1 abc" take the
- * same path through the DeleteCommand, and therefore we test only one of them.
- * The path variation for those two cases occur inside the ParserUtil, and
- * therefore should be covered by the ParserUtilTest.
- */
-public class DeleteEventCommandParserTest {
-
-    private DeleteEventCommandParser parser = new DeleteEventCommandParser();
-
-    @Test
-    public void parse_validArgs_returnsDeleteEventCommand() {
-        assertParseSuccess(parser, "1", new DeleteEventCommand(INDEX_FIRST_EVENT));
-    }
-
-    @Test
-    public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, "a", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                DeleteEventCommand.MESSAGE_USAGE));
-    }
-}
-```
-###### \java\seedu\room\logic\parser\ResidentBookParserTest.java
-``` java
-    @Test
-    public void parseCommand_addEvent() throws Exception {
-        Event event = new EventBuilder().build();
-        AddEventCommand command = (AddEventCommand) parser.parseCommand(EventUtil.getAddEventCommand(event));
-        assertEquals(new AddEventCommand(event), command);
-    }
-```
-###### \java\seedu\room\logic\parser\ResidentBookParserTest.java
-``` java
-    @Test
-    public void parseCommand_deleteEvent() throws Exception {
-        DeleteCommand command = (DeleteCommand) parser.parseCommand(
-                DeleteCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased());
-        assertEquals(new DeleteCommand(INDEX_FIRST_PERSON), command);
-    }
-```
-###### \java\seedu\room\logic\parser\SortCommandParserTest.java
-``` java
-
-/**
- * As we are only doing white-box testing, our test cases do not cover path variations
- * outside of the DeleteCommand code. For example, inputs "1" and "1 abc" take the
- * same path through the DeleteCommand, and therefore we test only one of them.
- * The path variation for those two cases occur inside the ParserUtil, and
- * therefore should be covered by the ParserUtilTest.
- */
-public class SortCommandParserTest {
-
-    private SortCommandParser parser = new SortCommandParser();
-
-    @Test
-    public void parse_validArgsPhone_returnsSwapCommand() {
-        assertParseSuccess(parser, " phone", new SortCommand("phone"));
-    }
-
-    @Test
-    public void parse_validArgsName_returnsSwapCommand() {
-        assertParseSuccess(parser, " name", new SortCommand("name"));
-    }
-
-    @Test
-    public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, " tag", String.format(MESSAGE_INVALID_COMMAND_FORMAT, SortCommand.MESSAGE_USAGE));
-    }
-
-    @Test
-    public void parse_invalidNumArgs_throwsParseException() {
-        assertParseFailure(parser, " name phone", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                SortCommand.MESSAGE_USAGE));
-    }
-
-    @Test
-    public void parse_emptyArgs_throwsParseException() {
-        assertParseFailure(parser, "", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                SortCommand.MESSAGE_USAGE));
-    }
-}
-```
-###### \java\seedu\room\logic\parser\SwaproomCommandParserTest.java
-``` java
-/**
- * As we are only doing white-box testing, our test cases do not cover path variations
- * outside of the DeleteCommand code. For example, inputs "1" and "1 abc" take the
- * same path through the DeleteCommand, and therefore we test only one of them.
- * The path variation for those two cases occur inside the ParserUtil, and
- * therefore should be covered by the ParserUtilTest.
- */
-public class SwaproomCommandParserTest {
-
-    private SwaproomCommandParser parser = new SwaproomCommandParser();
-
-    @Test
-    public void parse_validArgs_returnsSwapCommand() {
-        assertParseSuccess(parser, " 1 2", new SwaproomCommand(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON));
-    }
-
-    @Test
-    public void parse_invalidArgs_throwsParseException() {
-        assertParseFailure(parser, " a", String.format(MESSAGE_INVALID_COMMAND_FORMAT, SwaproomCommand.MESSAGE_USAGE));
-    }
-
-    @Test
-    public void parse_invalidNumArgs_throwsParseException() {
-        assertParseFailure(parser, " 1 3 4", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
-                SwaproomCommand.MESSAGE_USAGE));
-    }
-}
-```
-###### \java\seedu\room\model\EventBookTest.java
-``` java
-public class EventBookTest {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    private final EventBook eventBook = new EventBook();
-
-    @Test
-    public void constructor() {
-        assertEquals(Collections.emptyList(), eventBook.getEventList());
-    }
-
-    @Test
-    public void resetData_null_throwsNullPointerException() {
-        thrown.expect(NullPointerException.class);
-        eventBook.resetData(null);
-    }
-
-    @Test
-    public void resetData_withValidReadOnlyEventBook_replacesData() {
-        EventBook newData = getTypicalEventBook();
-        eventBook.resetData(newData);
-        assertEquals(newData, eventBook);
-    }
-
-    @Test
-    public void getEventList_modifyList_throwsUnsupportedOperationException() {
-        thrown.expect(UnsupportedOperationException.class);
-        eventBook.getEventList().remove(0);
-    }
-
-    /**
-     * A stub ReadOnlyEventBook whose eventlists can violate interface constraints.
-     */
-    private static class EventBookStub implements ReadOnlyEventBook {
-        private final ObservableList<ReadOnlyEvent> events = FXCollections.observableArrayList();
-
-        EventBookStub(Collection<? extends ReadOnlyEvent> events) {
-
-            this.events.setAll(events);
+        public void swapRooms(ReadOnlyPerson person1, ReadOnlyPerson person2) throws PersonNotFoundException {
+            fail("This method should not be called.");
         }
 
         @Override
-        public ObservableList<ReadOnlyEvent> getEventList() {
-            return events;
+        public ReadOnlyEventBook getEventBook() {
+            fail("This method should not be called.");
+            return null;
+        }
+
+        @Override
+        public void deleteEvent(ReadOnlyEvent target) throws EventNotFoundException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public void addEvent(ReadOnlyEvent person) throws DuplicateEventException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public void updateEvent(ReadOnlyEvent target, ReadOnlyEvent editedEvent) throws DuplicateEventException,
+                EventNotFoundException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public ObservableList<ReadOnlyEvent> getFilteredEventList() {
+            fail("This method should not be called.");
+            return null;
+        }
+
+        @Override
+        public void updateFilteredEventList(Predicate<ReadOnlyEvent> predicate) {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public void sortEventsBy(String sortCriteria) throws AlreadySortedException {
+            fail("This method should not be called.");
+        }
+    }
+
+    /**
+     * A Model stub that always throw a DuplicateEventException when trying to add a event.
+     */
+    private class ModelStubThrowingDuplicateEventException extends ModelStub {
+        @Override
+        public void addEvent(ReadOnlyEvent event) throws DuplicateEventException {
+            throw new DuplicateEventException();
+        }
+
+        @Override
+        public ReadOnlyResidentBook getResidentBook() {
+            return new ResidentBook();
+        }
+
+        @Override
+        public ReadOnlyEventBook getEventBook() {
+            return new EventBook();
+        }
+    }
+
+    /**
+     * A Model stub that always accept the event being added.
+     */
+    private class ModelStubAcceptingEventAdded extends ModelStub {
+        final ArrayList<Event> eventsAdded = new ArrayList<>();
+
+        @Override
+        public void addEvent(ReadOnlyEvent event) throws DuplicateEventException {
+            eventsAdded.add(new Event(event));
+        }
+
+        @Override
+        public ReadOnlyResidentBook getResidentBook() {
+            return new ResidentBook();
+        }
+
+        @Override
+        public ReadOnlyEventBook getEventBook() {
+            return new EventBook();
+        }
+    }
+
+}
+```
+###### /java/seedu/room/logic/commands/CommandTestUtil.java
+``` java
+    /**
+     * Updates {@code model}'s filtered list to show only the first event in the {@code model}'s event book.
+     */
+    public static void showFirstEventOnly(Model model) {
+        ReadOnlyEvent event = model.getEventBook().getEventList().get(0);
+        final String[] splitTitle = event.getTitle().value.split("\\s+");
+        model.updateFilteredEventList(new TitleContainsKeywordsPredicate(Arrays.asList(splitTitle[0])));
+
+        assert model.getFilteredEventList().size() == 1;
+    }
+
+    /**
+     * Deletes the first person in {@code model}'s filtered list from {@code model}'s event book.
+     */
+    public static void deleteFirstEvent(Model model) {
+        ReadOnlyEvent firstEvent = model.getFilteredEventList().get(0);
+        try {
+            model.deleteEvent(firstEvent);
+        } catch (EventNotFoundException enfe) {
+            throw new AssertionError("Event in filtered list must exist in model.", enfe);
         }
     }
 }
 ```
-###### \java\seedu\room\model\person\RoomTest.java
+###### /java/seedu/room/logic/commands/DeleteEventCommandTest.java
 ``` java
-public class RoomTest {
+/**
+ * Contains integration tests (interaction with the Model) and unit tests for {@code DeleteEventCommand}.
+ */
+public class DeleteEventCommandTest {
+
+    private Model model = new ModelManager(getTypicalResidentBook(), getTypicalEventBook(), new UserPrefs());
 
     @Test
-    public void isValidRoom() {
-        // invalid rooms
-        assertFalse(Room.isValidRoom("")); // empty string
-        assertFalse(Room.isValidRoom(" ")); // spaces only
-        assertFalse(Room.isValidRoom("-")); // one character
-        assertFalse(Room.isValidRoom("123-1234")); // long room
+    public void execute_validIndexUnfilteredList_success() throws Exception {
+        ReadOnlyEvent eventToDelete = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
+        DeleteEventCommand deleteEventCommand = prepareCommand(INDEX_FIRST_EVENT);
 
-        // valid rooms
-        assertTrue(Room.isValidRoom("09-100"));
+        String expectedMessage = String.format(DeleteEventCommand.MESSAGE_DELETE_EVENT_SUCCESS, eventToDelete);
 
-        // default empty room
-        assertTrue(Room.isValidRoom("Not Set"));
+        ModelManager expectedModel = new ModelManager(model.getResidentBook(), model.getEventBook(), new UserPrefs());
+        ReadOnlyEvent expectedEventToDelete = expectedModel.getFilteredEventList()
+                .get(INDEX_FIRST_EVENT.getZeroBased());
+        expectedModel.deleteEvent(expectedEventToDelete);
+
+        assertCommandSuccess(deleteEventCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_invalidIndexUnfilteredList_throwsCommandException() throws Exception {
+        Index outOfBoundIndex = Index.fromOneBased(model.getFilteredEventList().size() + 1);
+        DeleteEventCommand deleteEventCommand = prepareCommand(outOfBoundIndex);
+
+        assertCommandFailure(deleteEventCommand, model, Messages.MESSAGE_INVALID_EVENT_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void execute_validIndexFilteredList_success() throws Exception {
+        showFirstEventOnly(model);
+
+        ReadOnlyEvent eventToDelete = model.getFilteredEventList().get(INDEX_FIRST_EVENT.getZeroBased());
+        DeleteEventCommand deleteEventCommand = prepareCommand(INDEX_FIRST_EVENT);
+
+        String expectedMessage = String.format(DeleteEventCommand.MESSAGE_DELETE_EVENT_SUCCESS, eventToDelete);
+
+        Model expectedModel = new ModelManager(model.getResidentBook(), model.getEventBook(), new UserPrefs());
+        ReadOnlyEvent expectedEventToDelete = expectedModel.getFilteredEventList()
+                .get(INDEX_FIRST_EVENT.getZeroBased());
+        expectedModel.deleteEvent(expectedEventToDelete);
+        showNoEvent(expectedModel);
+
+        assertCommandSuccess(deleteEventCommand, model, expectedMessage, expectedModel);
+    }
+
+    @Test
+    public void execute_invalidIndexFilteredList_throwsCommandException() {
+        showFirstEventOnly(model);
+
+        Index outOfBoundIndex = INDEX_SECOND_EVENT;
+        // ensures that outOfBoundIndex is still in bounds of event book list
+        assertTrue(outOfBoundIndex.getZeroBased() < model.getEventBook().getEventList().size());
+
+        DeleteEventCommand deleteEventCommand = prepareCommand(outOfBoundIndex);
+
+        assertCommandFailure(deleteEventCommand, model, Messages.MESSAGE_INVALID_EVENT_DISPLAYED_INDEX);
+    }
+
+    @Test
+    public void equals() {
+        DeleteEventCommand deleteFirstEventCommand = new DeleteEventCommand(INDEX_FIRST_EVENT);
+        DeleteEventCommand deleteSecondEventCommand = new DeleteEventCommand(INDEX_SECOND_EVENT);
+
+        // same object -> returns true
+        assertTrue(deleteFirstEventCommand.equals(deleteFirstEventCommand));
+
+        // same values -> returns true
+        DeleteEventCommand deleteFirstEventCommandCopy = new DeleteEventCommand(INDEX_FIRST_EVENT);
+        assertTrue(deleteFirstEventCommand.equals(deleteFirstEventCommandCopy));
+
+        // different types -> returns false
+        assertFalse(deleteFirstEventCommand.equals(1));
+
+        // null -> returns false
+        assertFalse(deleteFirstEventCommand.equals(null));
+
+        // different event -> returns false
+        assertFalse(deleteFirstEventCommand.equals(deleteSecondEventCommand));
+    }
+
+    /**
+     * Returns a {@code DeleteCommand} with the parameter {@code index}.
+     */
+    private DeleteEventCommand prepareCommand(Index index) {
+        DeleteEventCommand deleteEventCommand = new DeleteEventCommand(index);
+        deleteEventCommand.setData(model, new CommandHistory(), new UndoRedoStack());
+        return deleteEventCommand;
+    }
+
+    /**
+     * Updates {@code model}'s filtered list to show no one.
+     */
+    private void showNoEvent(Model model) {
+        model.updateFilteredEventList(p -> false);
+
+        assert model.getFilteredEventList().isEmpty();
     }
 }
 ```
-###### \java\seedu\room\storage\StorageManagerTest.java
+###### /java/seedu/room/logic/commands/AddCommandTest.java
 ``` java
+        @Override
+        public void sortBy(String sortCriteria) throws AlreadySortedException {
+            fail("This method should not be called.");
+        }
 
+```
+###### /java/seedu/room/logic/commands/AddCommandTest.java
+``` java
+        public void swapRooms(ReadOnlyPerson person1, ReadOnlyPerson person2) throws PersonNotFoundException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public ReadOnlyEventBook getEventBook() {
+            fail("This method should not be called.");
+            return null;
+        }
+
+        @Override
+        public void deleteEvent(ReadOnlyEvent target) throws EventNotFoundException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public void addEvent(ReadOnlyEvent person) throws DuplicateEventException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public void updateEvent(ReadOnlyEvent target, ReadOnlyEvent editedEvent) throws DuplicateEventException,
+                                                                                            EventNotFoundException {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public ObservableList<ReadOnlyEvent> getFilteredEventList() {
+            fail("This method should not be called.");
+            return null;
+        }
+
+        @Override
+        public void updateFilteredEventList(Predicate<ReadOnlyEvent> predicate) {
+            fail("This method should not be called.");
+        }
+
+        @Override
+        public void sortEventsBy(String sortCriteria) throws AlreadySortedException {
+            fail("This method should not be called.");
+        }
+    }
+
+```
+###### /java/seedu/room/logic/commands/SwitchTabCommandTest.java
+``` java
+public class SwitchTabCommandTest {
+    @Rule
+    public final EventsCollectorRule eventsCollectorRule = new EventsCollectorRule();
+
+    @Test
+    public void execute_switchtab_success() {
+        try {
+            CommandResult result = new SwitchTabCommand(1).execute();
+            assertEquals(String.format(MESSAGE_SWITCH_TAB_SUCCESS, "Residents"), result.feedbackToUser);
+            assertTrue(eventsCollectorRule.eventsCollector.getMostRecent() instanceof SwitchTabRequestEvent);
+            assertTrue(eventsCollectorRule.eventsCollector.getSize() == 1);
+        } catch (CommandException ce) {
+            fail("This should never be called");
+        }
+    }
+
+    @Test
+    public void execute_switchtab_failure() {
+        try {
+            CommandResult result = new SwitchTabCommand(5).execute();
+            fail("This should never be called");
+        } catch (CommandException ce) {
+            assertEquals(SwitchTabCommand.MESSAGE_USAGE, ce.getMessage());
+        }
+    }
+}
+```
+###### /java/seedu/room/storage/StorageManagerTest.java
+``` java
     /**
      * A Stub class to throw an exception when the save method is called
      */
@@ -789,7 +790,7 @@ public class RoomTest {
     }
 
 ```
-###### \java\seedu\room\storage\XmlEventBookStorageTest.java
+###### /java/seedu/room/storage/XmlEventBookStorageTest.java
 ``` java
 public class XmlEventBookStorageTest {
     private static final String TEST_DATA_FOLDER = FileUtil
@@ -827,10 +828,6 @@ public class XmlEventBookStorageTest {
 
         thrown.expect(DataConversionException.class);
         readEventBook("NotXmlFormatEventBook.xml");
-
-        /* IMPORTANT: Any code below an exception-throwing line (like the one above) will be ignored.
-         * That means you should not have more than one exception test in one method
-         */
     }
 
     @Test
@@ -891,44 +888,78 @@ public class XmlEventBookStorageTest {
     }
 }
 ```
-###### \java\seedu\room\testutil\EventBookBuilder.java
+###### /java/seedu/room/model/person/RoomTest.java
 ``` java
-/**
- * A utility class to help with building Eventbook objects.
- * Example usage: <br>
- * {@code EventBook ab = new EventBookBuilder().withEvent(USPolymath).build();}
- */
-public class EventBookBuilder {
+public class RoomTest {
 
-    private EventBook eventBook;
+    @Test
+    public void isValidRoom() {
+        // invalid rooms
+        assertFalse(Room.isValidRoom("")); // empty string
+        assertFalse(Room.isValidRoom(" ")); // spaces only
+        assertFalse(Room.isValidRoom("-")); // one character
+        assertFalse(Room.isValidRoom("123-1234")); // long room
 
-    public EventBookBuilder() {
-        eventBook = new EventBook();
-    }
+        // valid rooms
+        assertTrue(Room.isValidRoom("09-100"));
 
-    public EventBookBuilder(EventBook eventBook) {
-        this.eventBook = eventBook;
-    }
-
-    /**
-     * Adds a new {@code Event} to the {@code EventBook} that we are building.
-     */
-    public EventBookBuilder withEvent(ReadOnlyEvent event) {
-        try {
-            eventBook.addEvent(event);
-        } catch (DuplicateEventException dpe) {
-            throw new IllegalArgumentException("event is expected to be unique.");
-        }
-        return this;
-    }
-
-
-    public EventBook build() {
-        return eventBook;
+        // default empty room
+        assertTrue(Room.isValidRoom("Not Set"));
     }
 }
 ```
-###### \java\seedu\room\testutil\EventBuilder.java
+###### /java/seedu/room/model/EventBookTest.java
+``` java
+public class EventBookTest {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    private final EventBook eventBook = new EventBook();
+
+    @Test
+    public void constructor() {
+        assertEquals(Collections.emptyList(), eventBook.getEventList());
+    }
+
+    @Test
+    public void resetData_null_throwsNullPointerException() {
+        thrown.expect(NullPointerException.class);
+        eventBook.resetData(null);
+    }
+
+    @Test
+    public void resetData_withValidReadOnlyEventBook_replacesData() {
+        EventBook newData = getTypicalEventBook();
+        eventBook.resetData(newData);
+        assertEquals(newData, eventBook);
+    }
+
+    @Test
+    public void getEventList_modifyList_throwsUnsupportedOperationException() {
+        thrown.expect(UnsupportedOperationException.class);
+        eventBook.getEventList().remove(0);
+    }
+
+    /**
+     * A stub ReadOnlyEventBook whose eventlists can violate interface constraints.
+     */
+    private static class EventBookStub implements ReadOnlyEventBook {
+        private final ObservableList<ReadOnlyEvent> events = FXCollections.observableArrayList();
+
+        EventBookStub(Collection<? extends ReadOnlyEvent> events) {
+
+            this.events.setAll(events);
+        }
+
+        @Override
+        public ObservableList<ReadOnlyEvent> getEventList() {
+            return events;
+        }
+    }
+}
+```
+###### /java/seedu/room/testutil/EventBuilder.java
 ``` java
 /**
  * A utility class to help with building Event objects.
@@ -1020,7 +1051,44 @@ public class EventBuilder {
 
 }
 ```
-###### \java\seedu\room\testutil\EventUtil.java
+###### /java/seedu/room/testutil/EventBookBuilder.java
+``` java
+/**
+ * A utility class to help with building EventBook objects.
+ * Example usage: <br>
+ * {@code EventBook ab = new EventBookBuilder().withEvent(USPolymath).build();}
+ */
+public class EventBookBuilder {
+
+    private EventBook eventBook;
+
+    public EventBookBuilder() {
+        eventBook = new EventBook();
+    }
+
+    public EventBookBuilder(EventBook eventBook) {
+        this.eventBook = eventBook;
+    }
+
+    /**
+     * Adds a new {@code Event} to the {@code EventBook} that we are building.
+     */
+    public EventBookBuilder withEvent(ReadOnlyEvent event) {
+        try {
+            eventBook.addEvent(event);
+        } catch (DuplicateEventException dpe) {
+            throw new IllegalArgumentException("event is expected to be unique.");
+        }
+        return this;
+    }
+
+
+    public EventBook build() {
+        return eventBook;
+    }
+}
+```
+###### /java/seedu/room/testutil/EventUtil.java
 ``` java
 /**
  * A utility class for Event.
@@ -1058,7 +1126,7 @@ public class EventUtil {
     }
 }
 ```
-###### \java\seedu\room\testutil\TypicalEvents.java
+###### /java/seedu/room/testutil/TypicalEvents.java
 ``` java
 /**
  * A utility class containing a list of {@code Event} objects to be used in tests.
@@ -1083,8 +1151,7 @@ public class TypicalEvents {
             .withDescription("Performance").withLocation("Dining Hall")
             .withDatetime("24/09/2017 1800 to 2100").build();
 
-    private TypicalEvents() {
-    } // prevents instantiation
+    private TypicalEvents() {} // Prevents instantiation
 
     /**
      * Returns an {@code EventBook} with all the typical events.
